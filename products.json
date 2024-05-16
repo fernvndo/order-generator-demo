@@ -1,0 +1,58 @@
+[
+    {
+        "name": "Fromm Classic Adult 30lb | FR010",
+        "description": "High-quality dog food for all breeds.",
+        "part_number": "FR010",
+        "price": 33.48,
+        "image_url": "https://imgur.com/VIMuGZD.png"
+    },
+    {
+        "name": "Fromm Classic Adult 15lb | FR02",
+        "description": "High-quality dog food for all breeds.",
+        "part_number": "FR02",
+        "price": 18.17,
+        "image_url": "https://imgur.com/VIMuGZD.png"
+    },
+    {
+        "name": "Fromm Classic Adult 5lb | FR021",
+        "description": "High-quality dog food for all breeds.",
+        "part_number": "FR021",
+        "price": 8.92,
+        "image_url": "https://imgur.com/VIMuGZD.png"
+    },
+    {
+        "name": "Fromm Classic Mature 30lb | FR030",
+        "description": "High-quality dog food for all breeds.",
+        "part_number": "FR030",
+        "price": 33.48,
+        "image_url": "https://imgur.com/zgudd7G.png"
+    },
+    {
+        "name": "Fromm Classic Mature 15lb | FR04",
+        "description": "High-quality dog food for all breeds.",
+        "part_number": "FR04",
+        "price": 18.17,
+        "image_url": "https://imgur.com/zgudd7G.png"
+    },
+    {
+        "name": "Fromm Classic Puppy 30lb | FR050",
+        "description": "High-quality dog food for all breeds.",
+        "part_number": "FR050",
+        "price": 36.95,
+        "image_url": "https://imgur.com/OOqmDbB.png"
+    },
+    {
+        "name": "Fromm Classic Puppy 15lb | FR06",
+        "description": "High-quality dog food for all breeds.",
+        "part_number": "FR06",
+        "price": 21.65,
+        "image_url": "https://imgur.com/OOqmDbB.png"
+    },
+    {
+        "name": "Fromm Classic Puppy 5lb | FR060",
+        "description": "High-quality dog food for all breeds.",
+        "part_number": "FR060",
+        "price": 9.81,
+        "image_url": "https://imgur.com/OOqmDbB.png"
+    }
+]

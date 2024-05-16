@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
+    <title>Pet Food Order Form</title>
+    <style>
+        body {
+            background-image: url('https://media.istockphoto.com/id/1189999060/vector/animal-paw-seamless-pattern-stock-illustration.jpg?s=612x612&w=0&k=20&c=8PcXcUSFigk0kyxYXfcQ-D6XcNUy16TQbKjNGM2i66U=');
+            background-repeat: repeat;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            width: 80%;
+            background-color: #ffffff; 
+            margin: 0 auto;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            
+        }
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .content {
+            display: flex;
+            justify-content: space-between;
+        }
+        .search-section, .order-section {
+            background-color: #f5f5dc; /* white */
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .search-section {
+            flex: 1;
+            margin-right: 20px;
+        }
+        .order-section {
+            flex: 2;
+        }
+        .order-list {
+            margin-top: 20px;
+        }
+        #search-results div {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+            cursor: pointer;
+        }
+        #search-results div:hover {
+            background-color: #f0f0f0;
+        }
+        /* Example CSS adjustments */
+        .table-container {
+            margin: 0; /* Adjust margin as needed */
+            padding: 0; /* Adjust padding as needed */
+        }
+
+        .table-cell {
+            padding: 5px; /* Adjust cell padding as needed */
+        }
+
+        .product-details {
+    display: flex;
+    align-items: center;
+}
+
+.product-image img {
+    width: 150px; /* Adjust as needed */
+    height: auto;
+    margin-right: 20px; /* Adjust spacing */
+}
+
+.product-info {
+    flex: 1;
+}
+
+#quantity {
+    margin-top: 10px; /* Adjust spacing */
+}
+
+#add-to-order {
+    margin-top: 10px; /* Adjust spacing */
+}
+.header {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+}
+
+.container .logo {
+    width: 150px; /* Adjust the size of the logo as needed */
+    height: auto;
+    margin-right: 20px; /* Space between logo and text */
+}
+
+.header .title {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+}
+
+#generate-pdf {
+    padding: 10px 20px; /* Increase padding for a bigger button */
+    font-size: 16px; /* Increase font size */
+    background-color: #4CAF50; /* Add background color */
+    color: white; /* Set text color to white */
+    border: none; /* Remove border */
+    border-radius: 5px; /* Add rounded corners */
+    cursor: pointer; /* Add pointer cursor */
+    float: right; /* Align button to the right */
+    margin: 20px 0; /* Add margin for spacing */
+}
+
+#generate-pdf:hover {
+    background-color: #45a049; /* Darker green on hover */
+}
+
+       
+
+    </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.15/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <img src="https://imgur.com/oV9rA9S.png" alt="Logo" class="logo">
+            <h1>Online Order Generator</h1>
+        </header>
+        <div class="content">
+            <div class="search-section">
+                <input type="text" id="search-bar" placeholder="Search for products...">
+                <div id="search-results"></div>
+            </div>
+            <div class="order-section">
+                <div id="image-container">
+                    <!-- Product image and description will be shown here -->
+                </div>
+                <div class="order-list">
+                    <h2>Order List</h2>
+                    <ul id="order-list">
+                        <!-- Ordered items will be listed here -->
+                    </ul>
+                    <button id="generate-pdf">Generate PDF</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+    let query = '';
+    let products = [];
+
+    const searchBar = document.getElementById('search-bar');
+    const searchResults = document.getElementById('search-results');
+
+    searchBar.addEventListener('input', async () => {
+        query = searchBar.value.toLowerCase();
+
+        try {
+            if (!query) {
+                searchResults.innerHTML = '';
+                return;
+            }
+
+            const response = await fetch('/products');
+            if (!response.ok) {
+                throw new Error('Failed to fetch products');
+            }
+            products = await response.json();
+            searchResults.innerHTML = '';
+
+            const filteredProducts = products.filter(product =>
+                product.name.toLowerCase().includes(query) ||
+                product.description.toLowerCase().includes(query)
+            );
+
+            filteredProducts.forEach(product => {
+                const resultItem = document.createElement('div');
+                resultItem.textContent = product.name;
+                resultItem.addEventListener('click', () => {
+                    displayProductDetails(product);
+                });
+                searchResults.appendChild(resultItem);
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    });
+
+    function displayProductDetails(product) {
+        const imageContainer = document.getElementById('image-container');
+        imageContainer.innerHTML = `
+            <div class="product-details">
+                <div class="product-image">
+                    <img src="${product.image_url}" alt="${product.name}">
+                </div>
+                <div class="product-info">
+                    <h2>${product.name}</h2>
+                    <p>${product.description}</p>
+                    <p>Price: $${product.price}</p>
+                </div>
+            </div>
+            <input type="number" id="quantity" min="1" value="1">
+            <button id="add-to-order">Add to Order</button>
+        `;
+
+        const addToOrderButton = document.getElementById('add-to-order');
+        addToOrderButton.addEventListener('click', () => {
+            addToOrderList(product);
+        });
+    }
+
+    function addToOrderList(product) {
+        const orderList = document.getElementById('order-list');
+        const quantity = parseInt(document.getElementById('quantity').value);
+        if (isNaN(quantity) || quantity < 1) {
+            alert('Please enter a valid quantity.');
+            return;
+        }
+
+        // Check for duplicates based on product name
+        const existingItems = orderList.querySelectorAll('li');
+        for (let item of existingItems) {
+            if (item.textContent.includes(product.name)) {
+                alert('This item is already on the order list.');
+                return;
+            }
+        }
+
+        const listItem = document.createElement('li');
+        listItem.dataset.partNumber = product.part_number;
+        listItem.dataset.unitPrice = product.price;
+        listItem.innerHTML = `
+            ${product.name} - Quantity: ${quantity}
+            <button class="remove-from-order">Remove</button>
+        `;
+
+        const removeButton = listItem.querySelector('.remove-from-order');
+        removeButton.addEventListener('click', () => {
+            orderList.removeChild(listItem);
+        });
+
+        orderList.appendChild(listItem);
+    }
+});
+
+document.getElementById('generate-pdf').addEventListener('click', () => {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    const orderItems = document.querySelectorAll('#order-list li');
+    const header = "Sunburst Pet Supplies, Inc.\nOnline Order Request";
+    const columns = ["#", "Product Description", "Qty", "Unit Price", "Total"];
+    let rows = [];
+    let totalOrderCost = 0;
+    let lineNumber = 1;
+
+    orderItems.forEach(item => {
+        const name = item.textContent.split(' - ')[0].trim(); // Trim whitespace from the name
+        const quantity = parseInt(item.textContent.split('Quantity: ')[1].trim()); // Trim whitespace from the quantity
+        const unitPrice = parseFloat(item.dataset.unitPrice);
+        const totalPrice = unitPrice * quantity;
+
+        if (isNaN(quantity) || isNaN(unitPrice) || isNaN(totalPrice)) {
+            console.error('Error parsing values:', {
+                name,
+                quantity,
+                unitPrice,
+                totalPrice
+            });
+        } else {
+            totalOrderCost += totalPrice;
+            rows.push([lineNumber++, name, quantity, `$${unitPrice.toFixed(2)}`, `$${totalPrice.toFixed(2)}`]);
+        }
+    });
+
+    // Add the total order cost row
+    rows.push(["", "", "", "Total", `$${totalOrderCost.toFixed(2)}`]);
+
+    let page = 1;
+    let startY = 30;
+    const itemsPerPage = 15;
+
+    function addPage() {
+        if (page > 1) doc.addPage();
+        doc.text(header, 10, 10);
+        doc.text(`Page ${page}`, 180, 10);
+        doc.autoTable({
+            startY: startY,
+            head: [columns],
+            body: rows.slice((page - 1) * itemsPerPage, page * itemsPerPage),
+            columnStyles: {
+                0: { cellWidth: 10 }, // Line Number column
+                1: { cellWidth: 90 }, // Product Description column
+                2: { cellWidth: 20 }, // Quantity column
+                3: { cellWidth: 30 }, // Unit Price column
+                4: { cellWidth: 30 }  // Total Price column
+            },
+            styles: {
+                overflow: 'linebreak', // Enable word wrap
+                cellPadding: 2, // Adjust cell padding
+                fontSize: 10, // Adjust font size
+                valign: 'middle' // Vertically align text to the middle
+            }
+        });
+        page++;
+    }
+
+    while (rows.length > (page - 1) * itemsPerPage) {
+        addPage();
+    }
+
+    doc.save('order.pdf');
+});
+
+window.addEventListener('beforeunload', function (e) {
+    const orderList = document.getElementById('order-list').children;
+    if (orderList.length > 0) {
+        const confirmationMessage = 'You have items in your order list. Are you sure you want to leave?';
+        (e || window.event).returnValue = confirmationMessage; // Gecko + IE
+        return confirmationMessage; // Gecko + Webkit, Safari, Chrome etc.
+    }
+});
+
+</script>
+
+    
+</body>
+</html>
