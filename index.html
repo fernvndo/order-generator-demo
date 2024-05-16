@@ -165,7 +165,7 @@
                 return;
             }
 
-            const response = await fetch('products.json');
+            const response = await fetch('https://raw.githubusercontent.com/fernvndo/order-generator-demo/main/products.json');
             if (!response.ok) {
                 throw new Error('Failed to fetch products');
             }
